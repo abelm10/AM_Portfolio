@@ -34,7 +34,7 @@ A project file is YAML frontmatter only:
 | `metric` | no | `{ value: "64.7%", label: "what the number means" }` |
 | `points` | yes | List of bullet points (can be empty) |
 | `stack` | yes | List of chips |
-| `links` | yes | List of `{ label, url, primary? }`; `primary: true` is the solid green button |
+| `links` | yes | At least one `{ label, url, primary? }` (http/https only); `primary: true` is the solid green button |
 | `order` | no | Lower comes first; projects without one go last, by title |
 
 Unknown fields are rejected, so a typo like `staus:` fails the build instead of being silently ignored.
@@ -43,7 +43,7 @@ Unknown fields are rejected, so a typo like `staus:` fails the build instead of 
 
 | File | What it drives |
 |---|---|
-| `content/site.ts` | Name, handle, site URL, location, university, GitHub/LinkedIn/Kaggle links, optional `email` (the contact section shows an email row only when it's set) |
+| `content/site.json` | Name, handle, site URL, location, university, GitHub/LinkedIn/Kaggle links, optional `email` (the contact section shows an email row only when it's set) |
 | `content/about.json` | Bio, motto, the key/value rows (`facts`), `experience` and `education` |
 | `content/toolkit.json` | The three toolkit rows and their chips |
 | `content/log.json` | commit-log month groups, newest first. Each item: `{ date: "22 sep", repo, text }`; `repo` links to `github.com/abelm10/<repo>` |

@@ -6,8 +6,8 @@ import fs from "node:fs";
 import path from "node:path";
 import readline from "node:readline";
 import matter from "gray-matter";
-import { z } from "zod";
 import { PROJECT_STATUSES, ProjectSchema } from "../lib/projects.ts";
+import { ProjectLinkSchema, slugify } from "../lib/schemas.ts";
 
 const PROJECTS_DIR = path.join(process.cwd(), "content", "projects");
 
@@ -53,17 +53,9 @@ async function askMany(noun: string): Promise<string[]> {
 async function askUrl(question: string): Promise<string> {
   for (;;) {
     const answer = await askRequired(question);
-    if (z.url().safeParse(answer).success) return answer;
+    if (ProjectLinkSchema.shape.url.safeParse(answer).success) return answer;
     console.log("  That doesn't look like a full URL (https://...).");
   }
-}
-
-function slugify(title: string): string {
-  return title
-    .replace(/\/+$/, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
 }
 
 function nextOrder(): number {
