@@ -30,6 +30,7 @@ function loadJson<T extends z.ZodType>(filename: string, schema: T): z.infer<T> 
 const SiteSchema = z.strictObject({
   name: z.string().min(1),
   handle: z.string().min(1),
+  url: z.url(),
   role: z.string().min(1),
   location: z.string().min(1),
   university: z.string().min(1),

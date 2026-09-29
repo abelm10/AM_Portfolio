@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { animateWhileVisible, cssToken, onThemeChange, prefersReducedMotion } from "@/lib/dom";
+import { animateWhileVisible, cssTokens, onThemeChange, prefersReducedMotion } from "@/lib/dom";
 
 type Bug = { x: number; y: number; vx: number; vy: number; dead: number; leg: number };
 
@@ -27,6 +27,8 @@ export default function BugBash() {
     let frame = 0;
     const bugs: Bug[] = [];
     const timers = new Set<ReturnType<typeof setTimeout>>();
+    const readColors = () => cssTokens(["--bg", "--fg", "--accent"] as const);
+    let colors = readColors();
 
     function spawn(bug: Bug = { x: 0, y: 0, vx: 0, vy: 0, dead: 0, leg: 0 }): Bug {
       bug.x = rnd(10, Math.max(11, W - SW - 10));
@@ -66,9 +68,8 @@ export default function BugBash() {
 
     function draw() {
       if (!ctx) return;
-      const fg = cssToken("--fg");
-      const accent = cssToken("--accent");
-      ctx.fillStyle = cssToken("--bg");
+      const { "--bg": bg, "--fg": fg, "--accent": accent } = colors;
+      ctx.fillStyle = bg;
       ctx.fillRect(0, 0, W, H);
       bugs.forEach((bug) => drawBug(bug, fg, accent));
     }
@@ -141,7 +142,10 @@ export default function BugBash() {
     const resizeObserver = new ResizeObserver(resize);
     resizeObserver.observe(cv);
     cv.addEventListener("pointerdown", onPointerDown);
-    const stopTheme = onThemeChange(draw);
+    const stopTheme = onThemeChange(() => {
+      colors = readColors();
+      draw();
+    });
     const stopLoop = reduceMotion ? () => {} : animateWhileVisible(cv, tick);
 
     return () => {

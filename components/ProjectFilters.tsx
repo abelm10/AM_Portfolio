@@ -31,10 +31,11 @@ export default function ProjectFilters({ projects, tags, children }: Props) {
                 key={tag}
                 type="button"
                 aria-pressed={tag === active}
-                aria-label={`${tag}, ${count} ${count === 1 ? "project" : "projects"}`}
                 onClick={() => setActive(tag)}
               >
                 {tag}
+                {/* The hidden space keeps the accessible name "ml 2" rather than "ml2". */}
+                <span className="sr-only"> </span>
                 <span className="n">{count}</span>
               </button>
             );
