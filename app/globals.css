@@ -1,3 +1,18 @@
+/* Mona Sans has ↑ and ↓ but no other arrows (→ ↗ ...). Render those from the same local
+   fonts the reference falls back to, rather than next/font's size-adjusted fallback. */
+@font-face {
+  font-family: "Arrows";
+  src: local("Helvetica Neue"), local("HelveticaNeue"), local("Arial"), local("ArialMT");
+  font-weight: 100 549;
+  unicode-range: U+2190, U+2192, U+2194-21FF;
+}
+@font-face {
+  font-family: "Arrows";
+  src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"), local("Arial Bold"), local("Arial-BoldMT");
+  font-weight: 550 900;
+  unicode-range: U+2190, U+2192, U+2194-21FF;
+}
+
 /* Ported from design-reference/index.html. Layout: a 1280px ledger with visible
    1px rules. Every section is a row of cells; headings read like folder paths. */
 :root {
@@ -9,20 +24,23 @@
   --accent: #08872b;
   --accent-ink: #ffffff;
   --pixel: #c9a400;
-  --sans: var(--font-mona), "Helvetica Neue", Arial, system-ui, sans-serif;
+  --sans: "Arrows", var(--font-mona), "Helvetica Neue", Arial, system-ui, sans-serif;
   --mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --pad: clamp(16px, 3vw, 32px);
+  --board-em: var(--pixel); /* scoreboard highlight; darker in dark mode, where the board turns light */
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #0b0f0d; --surface: #121815; --line: #28332d; --fg: #e6ece8; --muted: #8f9c94;
     --accent: #3fb950; --accent-ink: #03120a; --pixel: #e0b820; color-scheme: dark;
+    --board-em: #735d00;
   }
 }
 :root[data-theme="dark"] {
   --bg: #0b0f0d; --surface: #121815; --line: #28332d; --fg: #e6ece8; --muted: #8f9c94;
   --accent: #3fb950; --accent-ink: #03120a; --pixel: #e0b820; color-scheme: dark;
+    --board-em: #735d00;
 }
 
 * { box-sizing: border-box; }
@@ -251,7 +269,7 @@ main > section { border-top: 1px solid var(--line); }
 .tile { padding: 24px var(--pad) 28px; border-right: 1px solid var(--line); display: grid; gap: 12px; align-content: start; min-width: 0; }
 .tile:last-child { border-right: 0; }
 .board { font: 500 13px/1.5 var(--mono); background: var(--fg); color: var(--bg); padding: 12px 14px; white-space: pre; overflow-x: auto; }
-.board em { font-style: normal; color: var(--pixel); }
+.board em { font-style: normal; color: var(--board-em); }
 .tile h3 { margin: 0; font-size: 1.5rem; font-weight: 480; }
 .tile p { margin: 0; color: var(--muted); }
 @media (max-width: 860px) {
@@ -293,3 +311,8 @@ main > section { border-top: 1px solid var(--line); }
   .wm .word, .wm .m, .wm .px i, .cursor { animation: none; }
   .wm .m { transform: translateY(.3em); }
 }
+
+/* ---------- 404 ---------- */
+.nf-title { margin: 0; padding: clamp(40px, 7vw, 88px) var(--pad) 14px; font-size: clamp(4rem, 16vw, 12rem); font-weight: 850; font-stretch: 125%; letter-spacing: -0.035em; line-height: .85; }
+.nf-sub { margin: 0; padding: 0 var(--pad) 28px; color: var(--muted); font-size: 15px; }
+.nf-actions { padding: 0 var(--pad) clamp(40px, 6vw, 72px); }

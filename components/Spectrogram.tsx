@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { animateWhileVisible, cssToken, onThemeChange, prefersReducedMotion } from "@/lib/dom";
+import { animateWhileVisible, cssTokens, onThemeChange, prefersReducedMotion } from "@/lib/dom";
 
 type Mode = "real" | "synthetic";
 
@@ -34,6 +34,8 @@ export default function Spectrogram() {
     let f0 = 170;
     let f0Target = 170;
     let last = 0;
+    const readColors = () => cssTokens(["--bg", "--accent", "--pixel", "--line"] as const);
+    let colors = readColors();
 
     function column(): Float32Array {
       t++;
@@ -79,10 +81,7 @@ export default function Spectrogram() {
       if (!ctx) return;
       const w = cols * CELL;
       const h = rows * CELL;
-      const bg = cssToken("--bg");
-      const accent = cssToken("--accent");
-      const pixel = cssToken("--pixel");
-      const line = cssToken("--line");
+      const { "--bg": bg, "--accent": accent, "--pixel": pixel, "--line": line } = colors;
       ctx.fillStyle = bg;
       ctx.fillRect(0, 0, w + CELL, h + CELL);
       ctx.fillStyle = line;
@@ -125,7 +124,10 @@ export default function Spectrogram() {
 
     const resizeObserver = new ResizeObserver(resize);
     resizeObserver.observe(cv);
-    const stopTheme = onThemeChange(draw);
+    const stopTheme = onThemeChange(() => {
+      colors = readColors();
+      draw();
+    });
     const stopLoop = reduceMotion
       ? () => {}
       : animateWhileVisible(cv, (ts) => {

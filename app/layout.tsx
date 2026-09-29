@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Mona_Sans } from "next/font/google";
+import { getSite } from "@/lib/content";
 import { THEME_STORAGE_KEY } from "@/lib/theme";
 import "./globals.css";
 
@@ -15,10 +16,25 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
 });
 
+const site = getSite();
+const description =
+  "Abel M, MSc Data Science student in Bangalore. Models, data pipelines and the small web apps that put them to work.";
+
+// The OG image comes from app/opengraph-image.tsx and is attached automatically.
 export const metadata: Metadata = {
-  title: "Abel M",
-  description:
-    "Abel M, MSc Data Science student in Bangalore. Models, data pipelines and the small web apps that put them to work.",
+  metadataBase: new URL(site.url),
+  title: site.name,
+  description,
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    url: "/",
+    siteName: site.name,
+    title: site.name,
+    description,
+    locale: "en_IN",
+  },
+  twitter: { card: "summary_large_image", title: site.name, description },
 };
 
 // Runs during HTML parsing, before first paint, so a saved theme never flashes.

@@ -1,36 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# abelm10 portfolio
 
-## Getting Started
+Single-page portfolio for Abel M, live at https://am-portfolio-zeta.vercel.app. Built with Next.js (App Router), TypeScript and plain CSS. Every piece of copy lives in `content/`, is checked with [zod](https://zod.dev) at build time, and an invalid file fails the build with a message naming the file and field.
 
-First, run the development server:
+Vercel redeploys on every push to `main`.
+
+## Run it
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev        # http://localhost:3000
+npm run build      # production build; also validates all content
+npm run lint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Node 22.18 or later (the `add-project` script runs TypeScript directly).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Add a project
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run add-project
+```
 
-## Learn More
+It asks for each field, checks the answers against the same schema the build uses, and writes `content/projects/<slug>.md`. Or copy `content/projects/_template.md` (files starting with `_` are ignored) and fill it in by hand.
 
-To learn more about Next.js, take a look at the following resources:
+A project file is YAML frontmatter only:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Field | Required | Notes |
+|---|---|---|
+| `title` | yes | Shown as-is, so keep the trailing slash: `"fakewave/"` |
+| `status` | yes | `live` (green tag), `in development` (gold tag), `completed`, `case study` |
+| `tags` | yes | At least one. Drives the filter buttons: `ml`, `data`, `web`, `software` … |
+| `blurb` | yes | One or two sentences |
+| `metric` | no | `{ value: "64.7%", label: "what the number means" }` |
+| `points` | yes | List of bullet points (can be empty) |
+| `stack` | yes | List of chips |
+| `links` | yes | List of `{ label, url, primary? }`; `primary: true` is the solid green button |
+| `order` | no | Lower comes first; projects without one go last, by title |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Unknown fields are rejected, so a typo like `staus:` fails the build instead of being silently ignored.
 
-## Deploy on Vercel
+## Edit other content
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| File | What it drives |
+|---|---|
+| `content/site.ts` | Name, handle, site URL, location, university, GitHub/LinkedIn/Kaggle links, optional `email` (the contact section shows an email row only when it's set) |
+| `content/about.json` | Bio, motto, the key/value rows (`facts`), `experience` and `education` |
+| `content/toolkit.json` | The three toolkit rows and their chips |
+| `content/log.json` | commit-log month groups, newest first. Each item: `{ date: "22 sep", repo, text }`; `repo` links to `github.com/abelm10/<repo>` |
+| `content/learning.json` | Repos in the collapsible learning-log |
+| `content/hobbies.json` | The off-the-clock tiles. In `board` lines, wrap text in `*asterisks*` to highlight it |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+`experience` and `education` in `about.json` render as extra rows in about/ as soon as they have entries, with no code changes:
+
+```json
+"experience": [{ "title": "Data Science Intern", "org": "Company", "period": "2026" }],
+"education": [{ "title": "MSc Data Science", "org": "CHRIST University", "period": "2025–27" }]
+```
+
+`org` and `period` are optional. While `experience` is empty, the row shows `experiencePending` ("syncing from LinkedIn▌").
+
+## How it's put together
+
+- `app/`: the page, layout (fonts, metadata, pre-paint theme script), 404, OG image, sitemap and robots.
+- `app/globals.css`: the design system, ported from `design-reference/index.html` (the design's source of truth).
+- `components/sections/`: one component per page section, all server-rendered from `content/`.
+- `components/`: the client pieces: `ThemeToggle`, `ProjectFilters`, `Spectrogram`, `BugBash`, `CursorTrail`, `ConsoleEgg`.
+- `lib/content.ts`, `lib/projects.ts`: the zod schemas and loaders.
+- `scripts/add-project.ts`: the interactive project helper.
+
+The page is complete without JavaScript; the canvases, filters, theme switch and cursor trail are progressive. Everything animated respects `prefers-reduced-motion`.

@@ -1,8 +1,13 @@
 // Browser-only helpers shared by the canvas components. Call them from effects or handlers.
 
-/** Current value of a CSS custom property on <html>, e.g. cssToken("--accent"). Follows theme switches. */
-export function cssToken(name: string): string {
-  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+/**
+ * Current values of CSS custom properties on <html>, e.g. cssTokens(["--bg", "--accent"]).
+ * Reading computed style forces a style recalculation, so call this on mount and on theme
+ * change (see onThemeChange), never once per animation frame.
+ */
+export function cssTokens<T extends string>(names: readonly T[]): Record<T, string> {
+  const style = getComputedStyle(document.documentElement);
+  return Object.fromEntries(names.map((name) => [name, style.getPropertyValue(name).trim()])) as Record<T, string>;
 }
 
 export function prefersReducedMotion(): boolean {
