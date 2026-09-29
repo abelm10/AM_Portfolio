@@ -59,13 +59,22 @@ Unknown fields are rejected, so a typo like `staus:` fails the build instead of 
 
 `org` and `period` are optional. While `experience` is empty, the row shows `experiencePending` ("syncing from LinkedIn▌").
 
+## Edit from the browser: /admin
+
+Sign in at `/admin` with GitHub to add, edit, reorder and delete projects, and to edit every other content file. Only the GitHub user IDs in `ADMIN_GITHUB_IDS` get in. Each save is validated with the same schemas as the build and committed to `main` through the GitHub API, which triggers a Vercel redeploy (live in about a minute). Setup: [ADMIN_SETUP.md](ADMIN_SETUP.md).
+
+**After editing through the admin, run `git pull` before working locally**, because the admin commits to GitHub directly.
+
+To test without making commits, set `ADMIN_LOCAL_WRITES=true` in `.env.local`: saves then write the files in `content/` on disk (review them with `git diff`). It's ignored on Vercel.
+
 ## How it's put together
 
 - `app/`: the page, layout (fonts, metadata, pre-paint theme script), 404, OG image, sitemap and robots.
 - `app/globals.css`: the design system, ported from `design-reference/index.html` (the design's source of truth).
 - `components/sections/`: one component per page section, all server-rendered from `content/`.
 - `components/`: the client pieces: `ThemeToggle`, `ProjectFilters`, `Spectrogram`, `BugBash`, `CursorTrail`, `ConsoleEgg`.
-- `lib/content.ts`, `lib/projects.ts`: the zod schemas and loaders.
+- `lib/schemas.ts`: the zod schemas, shared by the build, `add-project` and the admin. `lib/content.ts` and `lib/projects.ts` load and validate the files.
+- `app/admin/`, `components/admin/`, `lib/admin/`: the admin (sign-in, editors, GitHub and local-disk store). `auth.ts` configures Auth.js.
 - `scripts/add-project.ts`: the interactive project helper.
 
 The page is complete without JavaScript; the canvases, filters, theme switch and cursor trail are progressive. Everything animated respects `prefers-reduced-motion`.

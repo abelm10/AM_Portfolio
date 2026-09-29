@@ -131,3 +131,11 @@
 .status-muted { color: var(--muted); }
 .notice { margin: 0 var(--pad) 16px; padding: 12px 16px; border: 1px solid var(--line); border-left: 3px solid var(--accent); background: var(--surface); font-size: 15px; }
 .notice.warn { border-left-color: var(--pixel); }
+
+/* two/three-column rows that stack on phones */
+.field-row.grid-kv { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); }
+.field-row.grid-log { grid-template-columns: 110px minmax(0, 1fr) minmax(0, 1.4fr); }
+@media (max-width: 660px) {
+  .field-row.grid-kv, .field-row.grid-log { grid-template-columns: 1fr; }
+  .list-item { grid-template-columns: 1fr; }
+}

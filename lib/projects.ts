@@ -55,10 +55,12 @@ export function compareProjects(
   return a.title.localeCompare(b.title);
 }
 
+// Cached for the production build only: in `npm run dev`, new or edited files (from the admin's
+// local mode or `npm run add-project`) show up on the next reload.
 let cache: Project[] | null = null;
 
 export function getAllProjects(): Project[] {
-  if (cache) return cache;
+  if (cache && process.env.NODE_ENV === "production") return cache;
   cache = loadProjects().sort(compareProjects);
   return cache;
 }
