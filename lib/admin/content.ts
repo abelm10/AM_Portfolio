@@ -225,6 +225,18 @@ export async function updateProject(slug: unknown, input: unknown, expectedSha: 
   return success(commit, shasAfter(changes));
 }
 
+/** The list view's status switch: changes only `status`, on the version the admin was looking at. */
+export async function setProjectStatus(slug: unknown, status: unknown, expectedSha: unknown): Promise<SaveResult> {
+  if (typeof expectedSha !== "string") return { ok: false, error: "Reload the page and try again." };
+  const file = await getStore().read(projectPath(slug));
+  if (!file || file.sha !== expectedSha) {
+    return { ok: false, error: "This changed since you opened it. Reload to get the latest.", conflict: true };
+  }
+  const { project } = parseProject(file.content);
+  if (!project) return { ok: false, error: "This project's file is invalid; open it to fix it first." };
+  return updateProject(slug, { ...project, status }, expectedSha);
+}
+
 export async function deleteProject(slug: unknown, expectedSha: unknown): Promise<SaveResult> {
   const path = projectPath(slug);
   if (typeof expectedSha !== "string") return { ok: false, error: "Reload the page and try again." };

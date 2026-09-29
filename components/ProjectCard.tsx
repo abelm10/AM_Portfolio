@@ -23,24 +23,24 @@ export default function ProjectCard({ project }: { project: Project }) {
       )}
       {project.points.length > 0 && (
         <ul className="pts">
-          {project.points.map((point) => (
-            <li key={point}>{point}</li>
+          {project.points.map((point, i) => (
+            <li key={`${i}-${point}`}>{point}</li>
           ))}
         </ul>
       )}
       <div className="card-foot">
         {project.stack.length > 0 && (
           <ul className="chips" aria-label="Stack">
-            {project.stack.map((item) => (
-              <li key={item}>{item}</li>
+            {project.stack.map((item, i) => (
+              <li key={`${i}-${item}`}>{item}</li>
             ))}
           </ul>
         )}
         {project.links.length > 0 && (
           <div className="card-actions">
-            {project.links.map((link) => (
+            {project.links.map((link, i) => (
               <a
-                key={link.url}
+                key={`${i}-${link.url}`}
                 className={`btn ${link.primary ? "btn-primary" : "btn-ghost"}`}
                 href={link.url}
                 target="_blank"

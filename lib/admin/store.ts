@@ -250,15 +250,16 @@ function githubStore(): ContentStore {
 const ROOT = process.cwd();
 const CONTENT_ROOT = nodePath.join(ROOT, "content");
 
+// The local store never runs on Vercel, so these paths are kept out of the deployment trace.
 function diskPath(path: string): string {
-  const full = nodePath.resolve(ROOT, path);
+  const full = nodePath.resolve(/*turbopackIgnore: true*/ ROOT, path);
   if (!full.startsWith(CONTENT_ROOT + nodePath.sep)) throw new StoreError(`Refusing to touch ${path}`);
   return full;
 }
 
 async function readDisk(path: string): Promise<StoredFile | null> {
   try {
-    const content = await fs.readFile(diskPath(path), "utf8");
+    const content = await fs.readFile(/*turbopackIgnore: true*/ diskPath(path), "utf8");
     return { path, content, sha: gitBlobSha(content) };
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === "ENOENT") return null;
@@ -270,7 +271,7 @@ const localStore: ContentStore = {
   mode: "local",
   read: readDisk,
   async listMarkdown(dir) {
-    const names = await fs.readdir(diskPath(dir));
+    const names = await fs.readdir(/*turbopackIgnore: true*/ diskPath(dir));
     const files = await Promise.all(names.filter(isMarkdownContent).map((name) => readDisk(`${dir}/${name}`)));
     return files.filter((file): file is StoredFile => file !== null).map(({ path, sha }) => ({ path, sha }));
   },
@@ -283,8 +284,8 @@ const localStore: ContentStore = {
       if ((current[i]?.sha ?? null) !== change.expectedSha) throw new ConflictError();
     });
     for (const change of changes) {
-      if (change.content === null) await fs.unlink(diskPath(change.path));
-      else await fs.writeFile(diskPath(change.path), change.content, "utf8");
+      if (change.content === null) await fs.unlink(/*turbopackIgnore: true*/ diskPath(change.path));
+      else await fs.writeFile(/*turbopackIgnore: true*/ diskPath(change.path), change.content, "utf8");
     }
     return { sha: "local", shortSha: "local", url: null, local: true };
   },
