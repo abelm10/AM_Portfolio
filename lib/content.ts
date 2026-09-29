@@ -1,14 +1,9 @@
 import fs from "node:fs";
 import path from "node:path";
-import matter from "gray-matter";
 import { z } from "zod";
+import siteConfig from "@/content/site";
 
 const CONTENT_DIR = path.join(process.cwd(), "content");
-
-function readJson(filename: string): unknown {
-  const fullPath = path.join(CONTENT_DIR, filename);
-  return JSON.parse(fs.readFileSync(fullPath, "utf8"));
-}
 
 function fail(filename: string, error: z.ZodError): never {
   const issues = error.issues
@@ -17,88 +12,130 @@ function fail(filename: string, error: z.ZodError): never {
   throw new Error(`Invalid content file: content/${filename}\n${issues}`);
 }
 
-// --- about.md ------------------------------------------------------------
-
-const AboutSchema = z.object({
-  quickFacts: z.array(z.object({ key: z.string(), value: z.string() })),
-});
-
-export type About = z.infer<typeof AboutSchema> & { body: string };
-
-export function getAbout(): About {
-  const fullPath = path.join(CONTENT_DIR, "about.md");
-  const raw = fs.readFileSync(fullPath, "utf8");
-  const { data, content } = matter(raw);
-  const result = AboutSchema.safeParse(data);
-  if (!result.success) fail("about.md", result.error);
-  return { ...result.data, body: content.trim() };
-}
-
-// --- skills.json -----------------------------------------------------------
-
-const SkillSchema = z.object({
-  name: z.string(),
-  level: z.number().min(0).max(100),
-  category: z.enum(["languages", "ml", "data", "tools"]),
-});
-
-export type Skill = z.infer<typeof SkillSchema>;
-
-export function getSkills(): Skill[] {
-  const result = z.array(SkillSchema).safeParse(readJson("skills.json"));
-  if (!result.success) fail("skills.json", result.error);
+function loadJson<T extends z.ZodType>(filename: string, schema: T): z.infer<T> {
+  const raw = fs.readFileSync(path.join(CONTENT_DIR, filename), "utf8");
+  let data: unknown;
+  try {
+    data = JSON.parse(raw);
+  } catch (error) {
+    throw new Error(`Invalid content file: content/${filename}\n  - ${(error as Error).message}`);
+  }
+  const result = schema.safeParse(data);
+  if (!result.success) fail(filename, result.error);
   return result.data;
 }
 
-// --- timeline.json ---------------------------------------------------------
+// --- site.ts -----------------------------------------------------------------
 
-const TimelineEntrySchema = z.object({
-  hash: z.string().optional(),
-  date: z.string(),
-  type: z.enum(["feat", "fix", "chore", "release"]),
-  title: z.string(),
-  detail: z.string().optional(),
+const SiteSchema = z.strictObject({
+  name: z.string().min(1),
+  handle: z.string().min(1),
+  role: z.string().min(1),
+  location: z.string().min(1),
+  university: z.string().min(1),
+  github: z.url(),
+  linkedin: z.url(),
+  kaggle: z.url(),
+  email: z.union([z.email(), z.literal("")]).optional(),
 });
 
-export type TimelineEntry = z.infer<typeof TimelineEntrySchema> & {
-  hash: string;
-};
+export type Site = z.infer<typeof SiteSchema>;
 
-// Deterministic fake 7-char hash so entries without one still look like a
-// real commit — same title always produces the same hash.
-function fakeHash(title: string): string {
-  let h = 0;
-  for (let i = 0; i < title.length; i++) {
-    h = (h * 31 + title.charCodeAt(i)) >>> 0;
-  }
-  return h.toString(16).padStart(7, "0").slice(0, 7);
+export function getSite(): Site {
+  const result = SiteSchema.safeParse(siteConfig);
+  if (!result.success) fail("site.ts", result.error);
+  return result.data;
 }
 
-export function getTimeline(): TimelineEntry[] {
-  const result = z
-    .array(TimelineEntrySchema)
-    .safeParse(readJson("timeline.json"));
-  if (!result.success) fail("timeline.json", result.error);
-  return result.data.map((entry) => ({
-    ...entry,
-    hash: entry.hash ?? fakeHash(entry.title),
-  }));
+/** Link to one of my repos by name, e.g. repoUrl("FakeWave"). */
+export function repoUrl(repo: string): string {
+  return `${getSite().github.replace(/\/$/, "")}/${repo}`;
+}
+
+// --- about.json --------------------------------------------------------------
+
+// Shared by experience and education: rendered as "title, org · period".
+const TimelineItemSchema = z.strictObject({
+  title: z.string().min(1),
+  org: z.string().min(1).optional(),
+  period: z.string().min(1).optional(),
+});
+
+const AboutSchema = z.strictObject({
+  bio: z.string().min(1),
+  motto: z.string().min(1),
+  facts: z.array(z.strictObject({ key: z.string().min(1), value: z.string().min(1) })),
+  experience: z.array(TimelineItemSchema),
+  // Shown in the experience row while `experience` is empty.
+  experiencePending: z.string().optional(),
+  education: z.array(TimelineItemSchema),
+});
+
+export type About = z.infer<typeof AboutSchema>;
+export type TimelineItem = z.infer<typeof TimelineItemSchema>;
+
+export function getAbout(): About {
+  return loadJson("about.json", AboutSchema);
+}
+
+// --- toolkit.json ------------------------------------------------------------
+
+const ToolkitRowSchema = z.strictObject({
+  label: z.string().min(1),
+  note: z.string(),
+  items: z.array(z.string().min(1)),
+});
+
+export type ToolkitRow = z.infer<typeof ToolkitRowSchema>;
+
+export function getToolkit(): ToolkitRow[] {
+  return loadJson("toolkit.json", z.array(ToolkitRowSchema));
+}
+
+// --- log.json ----------------------------------------------------------------
+
+const LogGroupSchema = z.strictObject({
+  month: z.string().min(1),
+  note: z.string(),
+  items: z.array(
+    z.strictObject({
+      date: z.string().min(1),
+      repo: z.string().min(1),
+      text: z.string(),
+    }),
+  ),
+});
+
+export type LogGroup = z.infer<typeof LogGroupSchema>;
+
+export function getLog(): LogGroup[] {
+  return loadJson("log.json", z.array(LogGroupSchema));
+}
+
+// --- learning.json -----------------------------------------------------------
+
+const LearningRepoSchema = z.strictObject({
+  name: z.string().min(1),
+  note: z.string(),
+});
+
+export type LearningRepo = z.infer<typeof LearningRepoSchema>;
+
+export function getLearning(): LearningRepo[] {
+  return loadJson("learning.json", z.array(LearningRepoSchema));
 }
 
 // --- hobbies.json ------------------------------------------------------------
 
-const HobbySchema = z.object({
-  name: z.string(),
-  icon: z.string(),
-  line: z.string(),
-  joke: z.string(),
-  relatedProject: z.string().optional(),
+const HobbySchema = z.strictObject({
+  title: z.string().min(1),
+  // Scoreboard lines; wrap a part in *asterisks* to highlight it.
+  board: z.array(z.string()).min(1),
+  text: z.string().min(1),
 });
 
 export type Hobby = z.infer<typeof HobbySchema>;
 
 export function getHobbies(): Hobby[] {
-  const result = z.array(HobbySchema).safeParse(readJson("hobbies.json"));
-  if (!result.success) fail("hobbies.json", result.error);
-  return result.data;
+  return loadJson("hobbies.json", z.array(HobbySchema));
 }

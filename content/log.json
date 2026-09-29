@@ -1,0 +1,46 @@
+[
+  {
+    "month": "sep26_",
+    "note": "shipping month",
+    "items": [
+      { "date": "22 sep", "repo": "FakeWave", "text": "Deepfake audio detector, in development" },
+      { "date": "18 sep", "repo": "Lost-Found-System", "text": "Java and MySQL lost-and-found desk" },
+      { "date": "08 sep", "repo": "Fixtures", "text": "Live sports dashboard" },
+      { "date": "06 sep", "repo": "asg-airlines-data-pipeline", "text": "Medallion pipeline and Power BI dashboard" }
+    ]
+  },
+  {
+    "month": "aug26_",
+    "note": "vision",
+    "items": [
+      { "date": "01 aug", "repo": "Weather_Classification", "text": "Four-class weather image classifier" }
+    ]
+  },
+  {
+    "month": "jan26_",
+    "note": "iteration",
+    "items": [
+      { "date": "23 jan", "repo": "Health_Mate", "text": "Second pass at HealthMate" }
+    ]
+  },
+  {
+    "month": "dec25_",
+    "note": "django month",
+    "items": [
+      { "date": "22 dec", "repo": "HealthMate", "text": "Symptom checker with a Flask API" },
+      { "date": "13 dec", "repo": "django--blog-page", "text": "Blog page" },
+      { "date": "03 dec", "repo": "fileupload-using-django", "text": "File uploads" },
+      { "date": "02 dec", "repo": "contact-form--django", "text": "Contact form" },
+      { "date": "01 dec", "repo": "django_CRUD-operations", "text": "CRUD operations" }
+    ]
+  },
+  {
+    "month": "nov25_",
+    "note": "first commits",
+    "items": [
+      { "date": "30 nov", "repo": "basic-django", "text": "First Django app" },
+      { "date": "29 nov", "repo": "automated-websearching-using-py", "text": "Browser automation in Python" },
+      { "date": "20 nov", "repo": "Stellar-Evolution-webpage", "text": "Stellar evolution web page" }
+    ]
+  }
+]
