@@ -1,3 +1,5 @@
+import ConsoleEgg from "@/components/ConsoleEgg";
+import CursorTrail from "@/components/CursorTrail";
 import About from "@/components/sections/About";
 import CommitLog from "@/components/sections/CommitLog";
 import Contact from "@/components/sections/Contact";
@@ -8,8 +10,11 @@ import OffTheClock from "@/components/sections/OffTheClock";
 import Projects from "@/components/sections/Projects";
 import Statement from "@/components/sections/Statement";
 import Toolkit from "@/components/sections/Toolkit";
+import { getSite } from "@/lib/content";
 
 export default function Home() {
+  const site = getSite();
+
   return (
     <>
       <Nav />
@@ -24,6 +29,8 @@ export default function Home() {
         <Contact />
       </main>
       <Footer />
+      <CursorTrail />
+      <ConsoleEgg handle={site.handle} linkedin={site.linkedin.replace(/^https?:\/\/(www\.)?/, "")} />
     </>
   );
 }
