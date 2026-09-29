@@ -1,0 +1,12 @@
+{
+  "bio": "I'm Abel, an MSc Data Science student in Bangalore. Most of my time goes into audio and vision models, data pipelines, and the web apps that make them usable. The rest goes into watching loss curves plateau and promising to clean my notebooks later.",
+  "motto": "If it runs on my machine, it ships.",
+  "facts": [
+    { "key": "based_in", "value": "Bangalore, India" },
+    { "key": "studying", "value": "MSc Data Science, CHRIST University" },
+    { "key": "focus", "value": "Audio deepfake detection, data engineering" }
+  ],
+  "experience": [],
+  "experiencePending": "syncing from LinkedIn",
+  "education": []
+}

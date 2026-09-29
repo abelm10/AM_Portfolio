@@ -1,69 +1,56 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import Footer from "@/components/sections/Footer";
+import Nav from "@/components/sections/Nav";
+import {
+  getAbout,
+  getHobbies,
+  getLearning,
+  getLog,
+  getSite,
+  getToolkit,
+} from "@/lib/content";
+import { getAllProjects, getAllTags } from "@/lib/projects";
 
+// Phase 2 placeholder: the frame, nav and footer are final; the sections land in phase 3.
+// Every loader runs here so an invalid content file already fails the build.
 export default function Home() {
+  const site = getSite();
+  const projects = getAllProjects();
+  const loaded = [
+    `site: ${site.name} (@${site.handle})`,
+    `projects: ${projects.map((p) => p.title).join(" ")}`,
+    `tags: ${getAllTags().join(", ")}`,
+    `learning-log: ${getLearning().length} repos`,
+    `commit-log: ${getLog().map((g) => g.month).join(" ")}`,
+    `toolkit: ${getToolkit().map((r) => r.label).join(", ")}`,
+    `off-the-clock: ${getHobbies().map((h) => h.title).join(" ")}`,
+    `about: ${getAbout().facts.length} facts`,
+  ];
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>
-            To get started, edit the{" "}
-            <code className={styles.code}>page.tsx</code> file.
-          </h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+    <>
+      <Nav />
+      <main>
+        <section className="frame" id="top" style={{ borderTop: 0 }}>
+          <div className="sec-head">
+            <div>
+              <p className="kicker">phase 2 / foundation</p>
+              <h1 className="sec-title">sections/</h1>
+              <p className="sec-sub">
+                Tokens, fonts, theme, frame, nav and footer are in. The sections land in phase 3.
+              </p>
+            </div>
+          </div>
+          <ul className="rows log-list">
+            {loaded.map((line) => (
+              <li key={line} className="mono">
+                <time>ok</time>
+                <p>{line}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
       </main>
-    </div>
+      <Footer />
+    </>
   );
 }

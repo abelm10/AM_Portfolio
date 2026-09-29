@@ -1,0 +1,9 @@
+[
+  { "name": "django--blog-page", "note": "A basic blog page in Django" },
+  { "name": "django_CRUD-operations", "note": "Create, read, update, delete" },
+  { "name": "fileupload-using-django", "note": "File uploads in Django" },
+  { "name": "contact-form--django", "note": "A contact form in Django" },
+  { "name": "basic-django", "note": "First steps with Django" },
+  { "name": "automated-websearching-using-py", "note": "Opens a browser and runs a set of predefined searches" },
+  { "name": "Stellar-Evolution-webpage", "note": "A page about how stars evolve" }
+]
