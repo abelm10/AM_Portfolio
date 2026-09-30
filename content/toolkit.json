@@ -2,16 +2,44 @@
   {
     "label": "languages",
     "note": "what I write in",
-    "items": ["Python", "Java", "JavaScript", "HTML", "CSS", "SQL"]
+    "items": [
+      "Python",
+      "Java",
+      "JavaScript",
+      "HTML",
+      "CSS",
+      "SQL"
+    ]
   },
   {
     "label": "data_&_ml",
     "note": "what I model with",
-    "items": ["PyTorch", "TensorFlow", "scikit-learn", "pandas", "NumPy", "Librosa", "OpenCV", "Matplotlib", "Jupyter", "Power BI"]
+    "items": [
+      "PyTorch",
+      "TensorFlow",
+      "scikit-learn",
+      "pandas",
+      "NumPy",
+      "Librosa",
+      "OpenCV",
+      "Matplotlib",
+      "Jupyter",
+      "Power BI",
+      "MySQL",
+      "Tableau"
+    ]
   },
   {
     "label": "ship",
     "note": "how it gets out the door",
-    "items": ["Django", "Flask", "Streamlit", "Gradio", "MySQL", "Git", "Vercel", "VS Code"]
+    "items": [
+      "Django",
+      "Streamlit",
+      "Gradio",
+      "Git",
+      "Vercel",
+      "VS Code",
+      "Flask"
+    ]
   }
 ]
