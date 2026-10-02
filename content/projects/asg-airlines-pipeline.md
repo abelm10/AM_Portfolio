@@ -29,6 +29,6 @@ links:
   - label: Repo
     url: 'https://github.com/abelm10/asg-airlines-data-pipeline'
     primary: true
-order: 1
+order: 2
 ---
 
