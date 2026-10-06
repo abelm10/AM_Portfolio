@@ -28,7 +28,7 @@ export default async function AdminProjectsPage() {
       <AreaHead
         kicker="ls ./content/projects"
         title="projects/"
-        sub="Reorder. dang bro, something new? crazy"
+        sub="Reorder. dang bro, something new? crazy."
         local={localWritesEnabled()}
         error={loaded.ok ? undefined : loaded.error}
       >
