@@ -1,5 +1,5 @@
 {
-  "bio": "I'm Abel, an MSc Data Science student in Bangalore. Most of my time goes into audio and vision models, data pipelines, and the web apps that make them usable. The rest goes into watching loss curves plateau and promising to clean my notebooks later.",
+  "bio": "I'm Abel, a Master's student in Data Science based in Bangalore. I’m usually somewhere between audio and vision models, data pipelines, and building web apps around them. I like figuring out how things work, building stuff that either I need or someone might find useful, and in that process learning and chaseing whatever catches my interest <3",
   "motto": "commit and pray",
   "facts": [
     {
@@ -17,5 +17,21 @@
   ],
   "experience": [],
   "experiencePending": "nil :(",
-  "education": []
+  "education": [
+    {
+      "title": "MSc Data Science",
+      "org": "CHRIST University",
+      "period": "2025- March '27"
+    },
+    {
+      "title": "BSc Computer Science",
+      "org": "KSDM Autonomous College",
+      "period": "2022- 2025"
+    },
+    {
+      "title": "Schooling",
+      "org": "Indian School Ibra, Oman",
+      "period": "till 2022"
+    }
+  ]
 }
