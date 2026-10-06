@@ -28,7 +28,7 @@ export default async function AdminProjectsPage() {
       <AreaHead
         kicker="ls ./content/projects"
         title="projects/"
-        sub="Reorder with the arrows; each move is one commit. Status changes save straight away."
+        sub="Reorder. dang bro, something new? crazy"
         local={localWritesEnabled()}
         error={loaded.ok ? undefined : loaded.error}
       >
