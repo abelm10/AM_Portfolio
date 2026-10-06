@@ -24,7 +24,7 @@ export default function HobbiesEditor(props: JsonEditorProps<Hobby[]>) {
             error={boardError(t)}
             hint={
               <>
-                One line per scoreboard line. Wrap text in <code>*asterisks*</code> to show it in gold.
+                for gold <code>*asterisks*</code>
               </>
             }
           >
