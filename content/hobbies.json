@@ -1,17 +1,26 @@
 [
   {
     "title": "football/",
-    "board": ["PL · UCL · LALIGA", "FT  *2 – 1*   90+4'"],
+    "board": [
+      "UCL · *Barcelona* V PSG ",
+      "FT  *6 – 1*   90+5'"
+    ],
     "text": "Premier League, Champions League, La Liga, Bundesliga, Serie A, Ligue 1, and the World Cup when it comes round."
   },
   {
     "title": "formula-1/",
-    "board": ["RACE · LAP *44/58*", "P1 +0.000  PIT: 1"],
+    "board": [
+      "RACE · LAP *44/58*",
+      "P1 +0.000  PIT: 1"
+    ],
     "text": "Practice, qualifying and race day. Strategy calls are just optimisation under tyre degradation."
   },
   {
     "title": "ufc/",
-    "board": ["MAIN EVENT", "R*3*   4:59   ▮▮▮"],
+    "board": [
+      "MAIN EVENT",
+      "R*3*   4:59   ▮▮▮"
+    ],
     "text": "Fight nights and the numbered cards. Three rounds, or five if it's the main event."
   }
 ]
