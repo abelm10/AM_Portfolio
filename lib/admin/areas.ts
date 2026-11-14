@@ -6,6 +6,7 @@ export const ADMIN_AREAS = [
   { slug: "toolkit", label: "toolkit/" },
   { slug: "off-the-clock", label: "off-the-clock/" },
   { slug: "learning-log", label: "learning-log/" },
+  { slug: "leaderboard", label: "leaderboard/" },
   { slug: "settings", label: "settings/" },
 ] as const;
 

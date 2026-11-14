@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import RankedArena from "@/components/RankedArena";
 import { animateWhileVisible, cssTokens, onThemeChange, prefersReducedMotion } from "@/lib/dom";
 
 type Bug = { x: number; y: number; vx: number; vy: number; dead: number; leg: number };
@@ -11,10 +12,56 @@ const SW = SPRITE[0].length * P;
 const SH = SPRITE.length * P;
 const rnd = (a: number, b: number) => a + Math.random() * (b - a);
 
+type TopRecord = { name: string; best: number } | null;
+
+/** The ranked #1, null if nobody has played, undefined if the leaderboard isn't available. */
+async function fetchRecord(): Promise<TopRecord | undefined> {
+  try {
+    const res = await fetch("/api/leaderboard", { cache: "no-store" });
+    if (!res.ok) return undefined;
+    const { players } = (await res.json()) as { players: { name: string; best: number }[] };
+    return players[0] ? { name: players[0].name, best: players[0].best } : null;
+  } catch {
+    return undefined;
+  }
+}
+
 /** Footer mini game: click the pixel bugs. Under reduced motion the bugs stand still. */
 export default function BugBash() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [score, setScore] = useState(0);
+  // Ranked mode: undefined until the leaderboard answers; stays hidden if it isn't set up.
+  const [record, setRecord] = useState<TopRecord | undefined>(undefined);
+  const [arena, setArena] = useState<"who" | "board" | null>(null);
+  const paused = useRef(false);
+  const opener = useRef<HTMLButtonElement | null>(null);
+
+  const refreshRecord = useCallback(() => {
+    void fetchRecord().then(setRecord);
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    void fetchRecord().then((next) => {
+      if (active) setRecord(next);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  function openArena(start: "who" | "board", button: HTMLButtonElement) {
+    opener.current = button;
+    paused.current = true;
+    setArena(start);
+  }
+
+  const closeArena = useCallback(() => {
+    paused.current = false;
+    setArena(null);
+    refreshRecord();
+    opener.current?.focus();
+  }, [refreshRecord]);
 
   useEffect(() => {
     const cv = canvasRef.current;
@@ -94,6 +141,7 @@ export default function BugBash() {
     }
 
     function tick() {
+      if (paused.current) return; // the ranked arena is open
       frame++;
       bugs.forEach((bug) => {
         if (bug.dead) {
@@ -160,10 +208,29 @@ export default function BugBash() {
   return (
     <>
       <div className="bug-head">
-        <span>echo &quot;clean-notebooks-later/&quot; &gt;&gt; .todo &nbsp;·&nbsp; click the bugs</span>
         <span>
-          bugs squashed: <strong>{score}</strong>
+          click the bugs &nbsp;·&nbsp; squashed: <strong>{score}</strong>
         </span>
+        {record !== undefined && (
+          <span className="bug-right">
+            <span className="record">
+              <span className="crown">#1</span>
+              {record ? (
+                <span>
+                  <b>{record.name}</b> · {record.best}
+                </span>
+              ) : (
+                <span>no record yet</span>
+              )}
+            </span>
+            <button className="linkish" type="button" onClick={(e) => openArena("board", e.currentTarget)}>
+              leaderboard
+            </button>
+            <button className="rank-btn" type="button" onClick={(e) => openArena("who", e.currentTarget)}>
+              set a record ▶
+            </button>
+          </span>
+        )}
       </div>
       <div className="bug-wrap">
         <canvas
@@ -173,6 +240,7 @@ export default function BugBash() {
           aria-label="Mini game: click the pixel bugs to squash them"
         />
       </div>
+      {arena && <RankedArena start={arena} onClose={closeArena} onSaved={refreshRecord} />}
     </>
   );
 }

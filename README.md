@@ -78,3 +78,11 @@ To test without making commits, set `ADMIN_LOCAL_WRITES=true` in `.env.local`: s
 - `scripts/add-project.ts`: the interactive project helper.
 
 The page is complete without JavaScript; the canvases, filters, theme switch and cursor trail are progressive. Everything animated respects `prefers-reduced-motion`.
+
+## Ranked mode and leaderboard
+
+The footer bug game has an optional ranked mode on laptops. **set a record ▶** opens a full-screen arena where friends take turns on one laptop. Each player picks their name (or creates one with a 4-digit PIN), enters their PIN, and plays a 60-second round with fixed rules: a 760 × 300 arena scaled to fit, 7 bugs, the same speed for everyone. Each player's best round goes on the leaderboard, and the footer shows the current `#1`.
+
+- **Storage:** Upstash Redis (`@upstash/redis`), set up from the Vercel dashboard: see [LEADERBOARD_SETUP.md](LEADERBOARD_SETUP.md). Without Redis vars, local dev uses a file store at `.data/leaderboard.json`, and production hides ranked mode (the API answers 503).
+- **Code:** `lib/leaderboard/` (store interface, Redis and file stores, zod schemas, PIN hashing, tokens), `app/api/leaderboard/` (route handlers), `components/RankedArena.tsx` (the arena), and the admin's `leaderboard/` area.
+- **Security:** PINs are hashed with scrypt and a per-player salt, and no route ever returns them. After a correct PIN, the browser holds a 30-minute HMAC-signed token in memory only, so nobody stays signed in on a shared laptop. There's no anti-cheat: it's a game among friends.
